@@ -1,0 +1,63 @@
+@import url("https://phinjensen.com/Charter/charter.css");
+
+body {
+  font-family: charter;
+  font-size: 14pt;
+  line-height: 1.4;
+}
+
+blockquote {
+  color: #036163;
+  border-left: 4px solid #036163;
+  padding: 0px 0px 8px 16px;
+  background-color: #e3e0dd;
+}
+
+.content {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.row > * {
+  padding: 8px;
+}
+
+.row .rank {
+  flex: 0 0 5em;
+  width: 5em;
+  margin-right: 8px;
+}
+
+.row .sentence {
+  flex: 1 1 auto;
+}
+
+.dqf-nav {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 32px;
+}
+
+.dqf-nav button {
+  padding: 8px;
+  font-size: 12pt;
+}
+
+#summary {
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+#summary th,
+#summary td {
+  padding: 8px 16px;
+}
+
+#summary tbody tr {
+  border-bottom: 1px solid #d3d3d3;
+}
