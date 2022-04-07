@@ -1,14 +1,12 @@
 import { render } from "react-dom";
 import React, { useState } from "react";
 
-sentences = sentences
-  .map((sentence) => {
-    sentence.shuffled_entries = shuffleArray(
-      Object.entries(sentence.translations)
-    );
-    return sentence;
-  })
-  .slice(0, 2); //TODO: undo slice
+sentences = sentences.map((sentence) => {
+  sentence.shuffled_entries = shuffleArray(
+    Object.entries(sentence.translations)
+  );
+  return sentence;
+});
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -18,18 +16,26 @@ function shuffleArray(array) {
   return array;
 }
 
+const storageKey = (sentenceIndex, translationKey) =>
+  `${new URLSearchParams(window.location.search).get(
+    "key"
+  )}:${sentenceIndex}:${translationKey}`;
+
 function Body() {
   const [index, setIndex] = useState(0);
   const [results, setResults] = useState(
-    sentences.map((sentence) =>
-      Object.fromEntries(
-        Object.entries(sentence.translations).map(([key, _]) => [key, 1]) //TODO: reset to 0
-      )
-    )
+    sentences.map((sentence, i) => {
+      return Object.fromEntries(
+        Object.entries(sentence.translations).map(([key, _]) => [
+          key,
+          window.localStorage.getItem(storageKey(i, key)) || "",
+        ])
+      );
+    })
   );
   const sentence = sentences[index];
   const num_translations = Object.keys(sentence.translations).length;
-  const incomplete = sentences.reduce((result, sentence, i) => {
+  const incomplete = sentences.reduce((result, _, i) => {
     if (
       !Object.values(results[i]).every(
         (value) => value > 0 && value <= num_translations
@@ -54,18 +60,23 @@ function Body() {
         {sentence.shuffled_entries.map(([key, val]) => (
           <div key={`${index}-${key}`} className="row">
             <input
+              placeholder="0"
               className="rank"
               type="number"
               value={results[index][key]}
-              onInput={(event) => {
+              onChange={(event) => {
                 event.preventDefault();
-                if (/^\d+$/.test(event.target.value)) {
-                  const rank = parseInt(event.target.value);
-                  if (rank >= 1 && rank <= num_translations) {
-                    results[index][key] = rank;
-                    setResults([...results]);
-                  }
+                let rank = event.target.valueAsNumber;
+                if (isNaN(rank)) {
+                  console.log("nan");
+                  rank = "";
+                } else if (rank < 1 || rank > num_translations) {
+                  console.log("oogabooga");
+                  rank = results[index][key];
                 }
+                results[index][key] = rank;
+                setResults([...results]);
+                window.localStorage.setItem(storageKey(index, key), rank);
               }}
             />
             <div className="sentence">{val}</div>
@@ -112,7 +123,7 @@ function Body() {
             </thead>
             <tbody>
               {sentences.map((_, i) => (
-                <tr>
+                <tr key={i}>
                   <td>
                     <a href="#" onClick={() => setIndex(i)}>
                       {i + 1}
