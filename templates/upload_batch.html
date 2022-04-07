@@ -16,7 +16,7 @@
   <p>Success! Your key(s):</p>
   <ul>
     {% for key in batch_keys %}
-    <li>{{key}}</li>
+    <li><a href="/dqf?key={{key}}">{{key}}</a></li>
     {% endfor %}
   {% endif %}
 {% endblock %}

@@ -3,8 +3,22 @@
 {% block title %}Upload Batch - Quality Assessment{% endblock %}
 
 {% block content %}
-<form method="get" action="/dqf">
-  <p>Please enter your batch key here:</p>
-  <input name="key" />
-</form>
+<ul>
+  <li><a href="/upload_batch">Upload a new batch</a></li>
+  <li>
+    Enter a batch key to
+    <ul>
+      <li>
+        <form method="get" action="/dqf">
+          <p>Evaluate: <input name="key" /> <input type="submit" value="Go" /></p>
+        </form>
+      </li>
+      <li>
+        <form method="get" action="/results">
+          <p>Download results: <input name="key" /> <input type="submit" value="Go" /></p>
+        </form>
+      </li>
+    </ul>
+  </li>
+</ul>
 {% endblock %}
