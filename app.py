@@ -1,8 +1,5 @@
-from flask import Flask, abort, render_template, request, session
-import json
-import os
+from flask import Flask, abort, render_template, request
 import sqlite3
-import time
 import uuid
 
 from flask.wrappers import Response
@@ -30,18 +27,20 @@ def index():
 
 @app.route("/upload_batch", methods=["GET", "POST"])
 def upload_batch():
-    if request.method == "GET":
-        return render_template("upload_batch.html")
-    elif request.method == "POST":
+    batch_keys = []
+    if request.method == "POST":
+        if "number" not in request.form or not request.form["number"].isdigit():
+            abort(400)
         with get_db_connection() as conn:
             cur = conn.cursor()
             cur.execute(
                 "INSERT INTO batches (source_lang, target_lang) VALUES ('en', 'tr')"
             )
             batch_id = get_db_id(cur)
-            batch_key = uuid.uuid4()
-            cur.execute(
-                "INSERT INTO batch_keys VALUES (?, ?)", (str(batch_key), batch_id)
+            batch_keys = [uuid.uuid4() for _ in range(int(request.form["number"]))]
+            cur.executemany(
+                "INSERT INTO batch_keys VALUES (?, ?)",
+                [(str(batch_key), batch_id) for batch_key in batch_keys],
             )
 
             file = request.files["file"]
@@ -65,7 +64,7 @@ def upload_batch():
                         for i, translation in enumerate(translations)
                     ],
                 )
-        return f"Success! Your key: {batch_key}"
+    return render_template("upload_batch.html", batch_keys=batch_keys)
 
 
 @app.route("/dqf", methods=["GET", "POST"])

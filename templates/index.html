@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Phin's DQF app</title>
-  </head>
-  <body>
-    <form method="get" action="/dqf">
-      <p>Please enter your batch key here:</p>
-      <input name="key" />
-    </form>
-  </body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Upload Batch - Quality Assessment{% endblock %}
+
+{% block content %}
+<form method="get" action="/dqf">
+  <p>Please enter your batch key here:</p>
+  <input name="key" />
+</form>
+{% endblock %}

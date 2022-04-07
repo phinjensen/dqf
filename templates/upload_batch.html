@@ -1,12 +1,22 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Phin's DQF app</title>
-  </head>
-  <body>
-    <form method="post" action="upload_batch" enctype="multipart/form-data">
-      <p>Choose your TSV file: <input name="file" type="file" /></p>
-      <button type="submit">Upload</button>
-    </form>
-  </body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Upload Batch - Quality Assessment{% endblock %}
+
+{% block content %}
+  {% if request.method == "GET" %}
+  <form method="post" action="upload_batch" enctype="multipart/form-data">
+    <p>Choose your TSV file: <input name="file" type="file" /></p>
+    <p>
+      How many evaluations would you like to make for this batch?:
+      <input name="number" type="number" />
+    </p>
+    <button type="submit">Upload</button>
+  </form>
+  {% elif request.method == "POST" %}
+  <p>Success! Your key(s):</p>
+  <ul>
+    {% for key in batch_keys %}
+    <li>{{key}}</li>
+    {% endfor %}
+  {% endif %}
+{% endblock %}
