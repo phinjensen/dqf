@@ -22,6 +22,8 @@ const storageKey = (sentenceIndex, translationKey) =>
   )}:${sentenceIndex}:${translationKey}`;
 
 function Body() {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
   const [index, setIndex] = useState(0);
   const [results, setResults] = useState(
     sentences.map((sentence, i) => {
@@ -45,6 +47,24 @@ function Body() {
     }
     return result;
   }, []);
+  if (result?.result === "success") {
+    return (
+      <div>
+        <h1>Success!</h1>
+        <p>Thanks for assessing this batch. Feel free to close the page.</p>
+      </div>
+    );
+  } else if (result?.result == "error") {
+    return (
+      <div>
+        <h1>Error :(</h1>
+        <p>
+          There was an error submitting your assesment. Please reload the page
+          and try again, or email phin@zayda.net if you're having more trouble.
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="content">
       <h1>Quality Assessment</h1>
@@ -91,8 +111,9 @@ function Body() {
           </span>
           {index === sentences.length - 1 ? (
             <button
-              disabled={incomplete.length}
+              disabled={loading || incomplete.length}
               onClick={() => {
+                setLoading(true);
                 fetch("", {
                   method: "POST",
                   body: JSON.stringify(
@@ -104,7 +125,10 @@ function Body() {
                   headers: {
                     "Content-Type": "application/json",
                   },
-                }).then((response) => console.log(response));
+                })
+                  .then((response) => response.json())
+                  .then((result) => setResult(result))
+                  .catch(() => setResult({ result: "error" }));
               }}
             >
               Submit Assessment

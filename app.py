@@ -1,4 +1,4 @@
-from flask import Flask, abort, render_template, request
+from flask import Flask, abort, render_template, request, json
 import sqlite3
 import uuid
 
@@ -131,7 +131,7 @@ def dqf():
                         "INSERT INTO rankings (translation_id, batch_key, rank) VALUES ((SELECT id FROM translations WHERE source_id=? AND translator_id=?), ?, ?)",
                         (result["id"], key, request.args["key"], rank),
                     )
-            return ""
+            return json.jsonify(result="success")
 
 
 @app.route("/results", methods=["GET"])
